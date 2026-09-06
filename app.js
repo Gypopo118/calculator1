@@ -35,9 +35,20 @@
     render();
   }
 
+  // Numbers (integer + fraction, e.g. "66,99") must wrap as a whole:
+  // break opportunities go only AFTER operators/parens, never inside digits.
+  // A leading/unary minus stays glued to its number. The decimal comma is
+  // never a break point.
+  function withBreaks(s) {
+    return s
+      .replace(/\(/g, '(<wbr>')
+      .replace(/([0-9)])([+×÷−])/g, '$1$2<wbr>')
+      .replace(/\)/g, ')<wbr>');
+  }
+
   function render() {
-    exprBefore.textContent = expr.slice(0, cursorPos);
-    exprAfter.textContent = expr.slice(cursorPos);
+    exprBefore.innerHTML = withBreaks(expr.slice(0, cursorPos));
+    exprAfter.innerHTML = withBreaks(expr.slice(cursorPos));
     updatePreview();
     fitFont();
   }
@@ -48,7 +59,9 @@
       exprLine.style.fontSize = size + 'px';
       // display.scrollHeight already includes both lines + its own padding,
       // so compare it directly with the visible height (+1px for subpixels).
-      if (display.scrollHeight <= display.clientHeight + 1) {
+      // hasSplitNumber() additionally forces shrinking while any number token
+      // doesn't fit its line — numbers must move whole, not break mid-digits.
+      if (display.scrollHeight <= display.clientHeight + 1 && !hasSplitNumber()) {
         chosen = size;
         break;
       }
@@ -57,6 +70,21 @@
     requestAnimationFrame(() => {
       display.scrollTop = display.scrollHeight;
     });
+  }
+
+  function hasSplitNumber() {
+    // Text runs are already split between tokens (<wbr> sits on element
+    // boundaries), so a run occupying >1 line box means it wrapped
+    // mid-number and the font must go one step smaller.
+    const walker = document.createTreeWalker(exprLine, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+      if (!node.textContent) continue;
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      if (range.getClientRects().length > 1) return true;
+    }
+    return false;
   }
 
   function updatePreview() {
