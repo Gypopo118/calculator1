@@ -38,7 +38,6 @@
   function render() {
     exprBefore.textContent = expr.slice(0, cursorPos);
     exprAfter.textContent = expr.slice(cursorPos);
-    exprLine.classList.toggle('has-content', expr.length > 0);
     updatePreview();
     fitFont();
   }
@@ -47,8 +46,9 @@
     let chosen = FONT_STEPS[FONT_STEPS.length - 1];
     for (const size of FONT_STEPS) {
       exprLine.style.fontSize = size + 'px';
-      const total = exprLine.scrollHeight + previewLine.scrollHeight + 4;
-      if (total <= display.clientHeight) {
+      // display.scrollHeight already includes both lines + its own padding,
+      // so compare it directly with the visible height (+1px for subpixels).
+      if (display.scrollHeight <= display.clientHeight + 1) {
         chosen = size;
         break;
       }
@@ -362,15 +362,36 @@
   });
 
   // ---------------- History panel open/close ----------------
+  // Opening pushes a history entry so the system Back button/gesture
+  // closes the panel instead of leaving the app. Closing via UI goes
+  // back() to keep the stack balanced (the popstate handler then no-ops).
+  let historyPushed = false;
   function openHistory() {
     renderHistoryList();
     historyPanel.classList.add('open');
     historyPanel.setAttribute('aria-hidden', 'false');
+    // Newest entry is first — pin to top so it's visible immediately.
+    historyList.scrollTop = 0;
+    if (!historyPushed) {
+      try { window.history.pushState({ calcHistory: true }, ''); historyPushed = true; } catch (e) { /* ignore: file:// etc. */ }
+    }
   }
   function closeHistory() {
+    if (!historyPanel.classList.contains('open')) return;
     historyPanel.classList.remove('open');
     historyPanel.setAttribute('aria-hidden', 'true');
+    if (historyPushed) {
+      historyPushed = false;
+      try { window.history.back(); } catch (e) { /* ignore */ }
+    }
   }
+  window.addEventListener('popstate', () => {
+    if (!historyPanel.classList.contains('open')) return;
+    historyPushed = false; // the back press already popped our entry
+    closeContextMenu();
+    historyPanel.classList.remove('open');
+    historyPanel.setAttribute('aria-hidden', 'true');
+  });
   historyClose.addEventListener('click', closeHistory);
 
   // ---------------- Context menu ----------------
@@ -474,9 +495,35 @@
   historyHeader.addEventListener('touchend', endClosePull);
   historyHeader.addEventListener('touchcancel', endClosePull);
 
+  // ---------------- Gesture: swipe up on the open history list to close ----
+  // Same drag-to-close as the header, but only when the list is already at
+  // the very top — otherwise the gesture scrolls the list natively.
+  historyList.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    closeStartY = e.touches[0].clientY;
+    closePulling = false;
+  }, { passive: true });
+  historyList.addEventListener('touchmove', (e) => {
+    if (closeStartY === null) return;
+    if (historyList.scrollTop > 0) { closeStartY = null; return; }
+    const dy = e.touches[0].clientY - closeStartY;
+    if (dy < -6) {
+      closePulling = true;
+      e.preventDefault();
+      closeDist = Math.min(-dy, window.innerHeight);
+      historyPanel.classList.add('dragging');
+      historyPanel.style.transform = `translateY(${-closeDist}px)`;
+    }
+  }, { passive: false });
+  historyList.addEventListener('touchend', endClosePull);
+  historyList.addEventListener('touchcancel', endClosePull);
+
   // ---------------- Keyboard support (for desktop/testing) ----------------
   window.addEventListener('keydown', (e) => {
-    if (historyPanel.classList.contains('open') || contextMenu.classList.contains('open')) return;
+    if (historyPanel.classList.contains('open') || contextMenu.classList.contains('open')) {
+      if (e.key === 'Escape') { closeContextMenu(); closeHistory(); }
+      return;
+    }
     const map = { '*': '×', '/': '÷', '-': '−', '.': ',' };
     if (/[0-9]/.test(e.key)) pressKey(e.key);
     else if (map[e.key]) pressKey(map[e.key]);
