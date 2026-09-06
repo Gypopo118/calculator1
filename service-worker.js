@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calculator-cache-v6';
+const CACHE_NAME = 'calculator-cache-v7';
 const ASSETS = [
   './',
   './index.html',
@@ -7,12 +7,10 @@ const ASSETS = [
   './manifest.json',
   './assets/fonts/SpaceGrotesk-Medium.woff2',
   './assets/fonts/SpaceGrotesk-Bold.woff2',
-  './assets/icons/icon-192.png',
-  './assets/icons/icon-512.png',
-  './assets/icons/icon-192-maskable.png',
-  './assets/icons/icon-512-maskable.png',
-  './assets/icons/apple-touch-icon.png',
-  './assets/icons/favicon-32.png'
+  './icons/icon192.png',
+  './icons/icon512.png',
+  './icons/icon32.png',
+  './icons/icon16.png'
 ];
 
 self.addEventListener('install', (event) => {
