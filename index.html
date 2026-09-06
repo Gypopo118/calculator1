@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Калькулятор</title>
+<meta name="description" content="Быстрый калькулятор с историей вычислений, редактируемым вводом и адаптивным экраном">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Калькулятор">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <div id="display-wrap">
+    <div id="display" role="textbox" aria-label="Экран вычислений">
+      <div id="expr-line"><span id="expr-before"></span><span id="caret"></span><span id="expr-after"></span><span id="expr-placeholder">0</span></div>
+      <div id="preview-line"></div>
+    </div>
+  </div>
+
+  <div id="history-panel" aria-hidden="true">
+    <div id="history-panel-header">
+      <span>История</span>
+      <button id="history-close" aria-label="Закрыть историю">✕</button>
+    </div>
+    <div id="history-list"></div>
+    <div id="history-empty">Здесь появятся ваши вычисления</div>
+  </div>
+
+  <div id="menu-overlay"></div>
+  <div id="context-menu">
+    <div id="context-menu-expr"></div>
+    <button data-action="op">Взять операцию</button>
+    <button data-action="res">Взять результат</button>
+  </div>
+
+  <div id="keypad">
+    <button class="key key-red"     data-key="clear"    aria-label="Очистить">C</button>
+    <button class="key key-coffee"  data-key="("         aria-label="Открывающая скобка">(</button>
+    <button class="key key-coffee"  data-key=")"         aria-label="Закрывающая скобка">)</button>
+    <button class="key key-red"     data-key="back"     aria-label="Стереть">⌫</button>
+
+    <button class="key key-graphite" data-key="7">7</button>
+    <button class="key key-graphite" data-key="8">8</button>
+    <button class="key key-graphite" data-key="9">9</button>
+    <button class="key key-coffee"   data-key="÷" aria-label="Разделить">÷</button>
+
+    <button class="key key-graphite" data-key="4">4</button>
+    <button class="key key-graphite" data-key="5">5</button>
+    <button class="key key-graphite" data-key="6">6</button>
+    <button class="key key-coffee"   data-key="×" aria-label="Умножить">×</button>
+
+    <button class="key key-graphite" data-key="1">1</button>
+    <button class="key key-graphite" data-key="2">2</button>
+    <button class="key key-graphite" data-key="3">3</button>
+    <button class="key key-coffee"   data-key="−" aria-label="Минус">−</button>
+
+    <button class="key key-graphite" data-key="0">0</button>
+    <button class="key key-graphite" data-key="," aria-label="Запятая">,</button>
+    <button class="key key-green"    data-key="="  aria-label="Равно">=</button>
+    <button class="key key-coffee"   data-key="+" aria-label="Плюс">+</button>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
