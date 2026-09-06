@@ -6,6 +6,10 @@
   let cursorPos = 0;
   let history = loadHistory();
   let selectedHistoryItem = null;
+  // True right after a successful '=': the screen shows a result, so typing
+  // a digit / comma / '(' starts a fresh expression, while an operator
+  // continues the calculation from the result.
+  let justEvaluated = false;
 
   const FONT_STEPS = [56, 50, 44, 38, 33, 28, 24];
   const OPERATORS = ['+', '−', '×', '÷'];
@@ -219,12 +223,22 @@
 
   // ---------------- Key handling ----------------
   function pressKey(key) {
-    if (key === 'clear') { setExpr('', 0); return; }
+    if (key === 'clear') { justEvaluated = false; setExpr('', 0); return; }
     if (key === 'back') {
+      justEvaluated = false;
       if (cursorPos > 0) setExpr(expr.slice(0, cursorPos - 1) + expr.slice(cursorPos), cursorPos - 1);
       return;
     }
     if (key === '=') { handleEquals(); return; }
+
+    if (justEvaluated) {
+      justEvaluated = false;
+      // A new number or '(' after '=' starts over on a clean screen;
+      // operators and ')' keep working with the displayed result.
+      if (/[0-9]/.test(key) || key === ',' || key === '(') {
+        setExpr('', 0);
+      }
+    }
 
     const before = expr.slice(0, cursorPos);
     const after = expr.slice(cursorPos);
@@ -291,6 +305,7 @@
       const resultPlain = formatPlain(val);
       addHistory(expr, resultPretty, resultPlain);
       setExpr(resultPlain, resultPlain.length);
+      justEvaluated = true;
     } catch (e) {
       shakeError();
     }
@@ -440,8 +455,10 @@
     if (!btn || !selectedHistoryItem) return;
     if (btn.dataset.action === 'op') {
       setExpr(selectedHistoryItem.expr, selectedHistoryItem.expr.length);
+      justEvaluated = false;
     } else {
       setExpr(selectedHistoryItem.resultPlain, selectedHistoryItem.resultPlain.length);
+      justEvaluated = true;
     }
     closeContextMenu();
     closeHistory();
