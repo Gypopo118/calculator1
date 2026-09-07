@@ -5,13 +5,15 @@
   "description": "PWA «Калькулятор» — упаковка в Android APK через Capacitor (сборка в GitHub Actions)",
   "scripts": {
     "build:www": "node scripts/build-www.js",
-    "android:sync": "npm run build:www && cap sync android"
+    "android:sync": "npm run build:www && cap sync android",
+    "android:icons": "node scripts/prepare-launcher-icon.js && capacitor-assets generate --android --assetPath .tmp-assets --iconBackgroundColor #000000 --splashBackgroundColor #000000"
   },
   "dependencies": {
     "@capacitor/core": "^7.4.0"
   },
   "devDependencies": {
     "@capacitor/android": "^7.4.0",
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^7.4.0",
     "typescript": "^5.5.0"
   },

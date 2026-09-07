@@ -15,8 +15,10 @@ PWA-файлы (`index.html`, `app.js`, `style.css`, `manifest.json`, `service-w
 упаковываются в нативную Android-оболочку через [Capacitor](https://capacitorjs.com/):
 
 1. `npm run build:www` — скрипт `scripts/build-www.js` копирует PWA по белому списку в `www/`.
-2. `npx cap add android` + `npx cap sync android` — создаются Android-проект и ассеты.
-3. `./gradlew assembleDebug` — собирается `app-debug.apk`.
+2. `npx cap add android` + `npm run android:icons` — создаются Android-проект и launcher-иконки
+   из `icons/icon512.png` (та же иконка, что в `manifest.json`, через `@capacitor/assets`).
+3. `npx cap sync android` — веб-ассеты кладутся в Android-проект.
+4. `./gradlew assembleDebug` — собирается `app-debug.apk`.
 
 Всё это делает workflow `.github/workflows/android-apk.yml` на каждый пуш в `main`.
 Папки `www/`, `android/`, `node_modules/` генерируются в CI и в репозиторий не коммитятся.

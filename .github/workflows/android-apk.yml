@@ -44,6 +44,9 @@ jobs:
       - name: Add Capacitor Android platform
         run: npx cap add android
 
+      - name: Generate launcher icons from PWA icon
+        run: npm run android:icons
+
       - name: Sync web assets into Android project
         run: npx cap sync android
 
