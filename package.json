@@ -6,7 +6,7 @@
   "scripts": {
     "build:www": "node scripts/build-www.js",
     "android:sync": "npm run build:www && cap sync android",
-    "android:icons": "node scripts/prepare-launcher-icon.js && capacitor-assets generate --android --assetPath .tmp-assets --iconBackgroundColor #000000 --splashBackgroundColor #000000"
+    "android:icons": "node scripts/prepare-launcher-icon.js && capacitor-assets generate --android --assetPath .tmp-assets --iconBackgroundColor black --splashBackgroundColor black"
   },
   "dependencies": {
     "@capacitor/core": "^7.4.0"
