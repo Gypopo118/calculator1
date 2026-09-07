@@ -12,7 +12,8 @@
   },
   "devDependencies": {
     "@capacitor/android": "^7.4.0",
-    "@capacitor/cli": "^7.4.0"
+    "@capacitor/cli": "^7.4.0",
+    "typescript": "^5.5.0"
   },
   "engines": {
     "node": ">=20"
