@@ -1,0 +1,20 @@
+{
+  "name": "calculator-pwa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PWA «Калькулятор» — упаковка в Android APK через Capacitor (сборка в GitHub Actions)",
+  "scripts": {
+    "build:www": "node scripts/build-www.js",
+    "android:sync": "npm run build:www && cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.4.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^7.4.0",
+    "@capacitor/cli": "^7.4.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

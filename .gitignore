@@ -1,0 +1,16 @@
+# Generated / local-only — never commit
+node_modules/
+www/
+android/
+*.log
+
+# Agent / editor state
+.omo/
+.codegraph/
+.vscode/
+.idea/
+*.local
+
+# OS junk
+.DS_Store
+Thumbs.db
