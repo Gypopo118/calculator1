@@ -34,6 +34,12 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Легаси-пакет 'tools' удалён из репозитория Android SDK, поэтому
+          # дефолтный список action ('tools platform-tools') падает с
+          # "Failed to find package 'tools'". Ставим только platform-tools;
+          # cmdline-tools action устанавливает сам.
+          packages: 'platform-tools'
 
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
