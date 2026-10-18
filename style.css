@@ -178,7 +178,7 @@ body{
 .key-graphite{ background: var(--graphite); }
 .key-graphite:active{ background: var(--graphite-active); }
 
-.key-coffee{ background: var(--coffee); font-weight: 600; }
+.key-coffee{ background: var(--coffee); font-weight: 600; font-size: clamp(32px, 9vw, 46px); }
 .key-coffee:active{ background: var(--coffee-active); }
 
 .key-red{ background: var(--red); font-weight: 600; }
@@ -186,6 +186,40 @@ body{
 
 .key-green{ background: var(--green); font-weight: 700; }
 .key-green:active{ background: var(--green-active); }
+
+/* '=' spans the two cells freed by the shifted operator column —
+   a wide green pill (border-radius stays 999px). */
+#keypad .key-eq{
+  grid-column: span 2;
+  font-size: clamp(32px, 8.6vw, 44px);
+}
+
+/* Merged brackets key: two symmetric SVG arcs; tap = '(', hold = ')'.
+   touch-action:none so the browser never claims the 420ms hold gesture.
+   padding:0 makes .paren-icon's 56% resolve against the full key size
+   (UA default button padding would shrink and slightly distort the arcs). */
+.key-paren{
+  touch-action: none;
+  -webkit-touch-callout: none;
+  padding: 0;
+}
+/* preventDefault() in pointerdown can suppress :active, so press feedback
+   is driven by this class instead of the :active pseudo-class. */
+.key-paren.holding{
+  transform: scale(0.92);
+  filter: brightness(1.12);
+}
+.paren-icon{
+  width: 56%;
+  height: 56%;
+  display: block;
+}
+.paren-icon path{
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.6;
+  stroke-linecap: round;
+}
 
 /* ---------- HISTORY PANEL ---------- */
 

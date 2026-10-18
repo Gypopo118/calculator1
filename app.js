@@ -314,7 +314,59 @@
   keypad.addEventListener('click', (e) => {
     const btn = e.target.closest('.key');
     if (!btn) return;
+    // The merged brackets key is driven entirely by pointer events
+    // (tap -> '(', hold -> ')'), so the generic handler must skip it.
+    if (btn.dataset.key === 'paren') return;
     pressKey(btn.dataset.key);
+  });
+
+  // ---------------- Merged brackets key: tap '(' / hold ')' ----------------
+  // The key is not routed through the click handler above: pointer events
+  // decide between a short tap (inserts an opening bracket) and a hold of
+  // >= 420ms (inserts a closing bracket), with a vibration on the hold.
+  const parenKey = keypad.querySelector('.key-paren');
+  const PAREN_HOLD_MS = 420;
+  let parenHoldTimer = null;
+  let parenLongFired = false;
+  let parenActivePointer = null;
+
+  parenKey.addEventListener('pointerdown', (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    if (parenHoldTimer !== null || parenActivePointer !== null) return;
+    e.preventDefault();
+    parenKey.setPointerCapture(e.pointerId);
+    parenActivePointer = e.pointerId;
+    parenLongFired = false;
+    parenKey.classList.add('holding');
+    parenHoldTimer = setTimeout(() => {
+      parenHoldTimer = null;
+      pressKey(')');
+      if (navigator.vibrate) navigator.vibrate(20);
+      parenLongFired = true;
+    }, PAREN_HOLD_MS);
+  });
+
+  parenKey.addEventListener('pointerup', (e) => {
+    if (e.pointerId !== parenActivePointer) return;
+    parenActivePointer = null;
+    if (parenHoldTimer) clearTimeout(parenHoldTimer);
+    parenHoldTimer = null;
+    parenKey.classList.remove('holding');
+    if (!parenLongFired) pressKey('(');
+    parenLongFired = false;
+  });
+
+  parenKey.addEventListener('pointercancel', () => {
+    parenActivePointer = null;
+    if (parenHoldTimer) clearTimeout(parenHoldTimer);
+    parenHoldTimer = null;
+    parenKey.classList.remove('holding');
+    parenLongFired = false;
+  });
+
+  // Android WebView shows a context menu on long-press — suppress it.
+  parenKey.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
   });
 
   // ---------------- Cursor placement by tap ----------------
