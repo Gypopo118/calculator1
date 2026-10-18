@@ -50,6 +50,12 @@ jobs:
       - name: Add Capacitor Android platform
         run: npx cap add android
 
+      # WebView молча игнорирует navigator.vibrate() без
+      # android.permission.VIBRATE (короткий виброотклик на нажатия клавиш) —
+      # дописываем разрешение в сгенерированный шаблонный манифест.
+      - name: Add VIBRATE permission to Android manifest
+        run: npm run android:permissions
+
       - name: Generate launcher icons from PWA icon
         run: npm run android:icons
 

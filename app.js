@@ -222,6 +222,17 @@
   }
 
   // ---------------- Key handling ----------------
+  // Very short haptic tick on every key press: 10 ms, the same length Chrome
+  // uses for its own UI ticks. navigator.vibrate() is a no-op on desktop,
+  // and in the APK it needs android.permission.VIBRATE — the CI build adds
+  // it to the generated manifest (scripts/patch-android-manifest.js).
+  // Longer distinct patterns stay: 30 ms on error, 20 ms on brackets hold.
+  const KEY_TICK_MS = 10;
+
+  function keyTick() {
+    if (navigator.vibrate) navigator.vibrate(KEY_TICK_MS);
+  }
+
   function pressKey(key) {
     if (key === 'clear') { justEvaluated = false; setExpr('', 0); return; }
     if (key === 'back') {
@@ -317,6 +328,7 @@
     // The merged brackets key is driven entirely by pointer events
     // (tap -> '(', hold -> ')'), so the generic handler must skip it.
     if (btn.dataset.key === 'paren') return;
+    keyTick();
     pressKey(btn.dataset.key);
   });
 
@@ -334,6 +346,7 @@
     if (e.button !== undefined && e.button !== 0) return;
     if (parenHoldTimer !== null || parenActivePointer !== null) return;
     e.preventDefault();
+    keyTick();
     parenKey.setPointerCapture(e.pointerId);
     parenActivePointer = e.pointerId;
     parenLongFired = false;

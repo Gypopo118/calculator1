@@ -17,8 +17,10 @@ PWA-файлы (`index.html`, `app.js`, `style.css`, `manifest.json`, `service-w
 1. `npm run build:www` — скрипт `scripts/build-www.js` копирует PWA по белому списку в `www/`.
 2. `npx cap add android` + `npm run android:icons` — создаются Android-проект и launcher-иконки
    из `icons/icon512.png` (та же иконка, что в `manifest.json`, через `@capacitor/assets`).
-3. `npx cap sync android` — веб-ассеты кладутся в Android-проект.
-4. `./gradlew assembleDebug` — собирается `app-debug.apk`.
+3. `npm run android:permissions` — добавляет `android.permission.VIBRATE` в сгенерированный
+   манифест (без него WebView игнорирует короткий виброотклик на нажатия клавиш).
+4. `npx cap sync android` — веб-ассеты кладутся в Android-проект.
+5. `./gradlew assembleDebug` — собирается `app-debug.apk`.
 
 Всё это делает workflow `.github/workflows/android-apk.yml` на каждый пуш в `main`.
 Папки `www/`, `android/`, `node_modules/` генерируются в CI и в репозиторий не коммитятся.
