@@ -44,7 +44,11 @@
 
   <div id="keypad">
     <button class="key key-red"     data-key="clear" aria-label="Очистить">C</button>
-    <button class="key key-red"     data-key="back"  aria-label="Стереть">←</button>
+    <button class="key key-red key-back" data-key="back" aria-label="Стереть">
+      <svg class="back-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+        <path d="M 33 22 H 11 M 19 14 L 11 22 L 19 30" />
+      </svg>
+    </button>
     <button class="key key-coffee key-paren" data-key="paren" aria-label="Скобка: нажатие — «(», удержание — «)»">
       <svg class="paren-icon" viewBox="0 0 44 44" aria-hidden="true" focusable="false">
         <path d="M17.5 7 C 9 15.5 9 28.5 17.5 37" />

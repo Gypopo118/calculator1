@@ -221,6 +221,24 @@ body{
   stroke-linecap: round;
 }
 
+/* Back key: vector arrow instead of a text '←'. A text glyph sits on the
+   font baseline and renders below the visual center (and differently per
+   fallback font); the SVG path is symmetric around the viewBox center, so
+   flexbox centers it exactly on every device. */
+.key-back{ padding: 0; }
+.back-icon{
+  width: 56%;
+  height: 56%;
+  display: block;
+}
+.back-icon path{
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 /* ---------- HISTORY PANEL ---------- */
 
 #history-panel{
